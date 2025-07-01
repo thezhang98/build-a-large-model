@@ -1,0 +1,12 @@
+按照https://github.com/skindhu/Build-A-Large-Language-Model-CN书中的流程一步步实现一个自己的大语言模型
+
+# 环境
+Python 3.10.11
+
+## 创建虚拟环境
+python  -m venv E:\GitHubWorkspace\build-a-large-model
+
+- 激活
+Scripts/activate.bat
+- 退出
+deactivate.bat
