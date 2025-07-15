@@ -1,3 +1,4 @@
 Lib/site-packages
 .idea
 .vscode
+__pycache__
