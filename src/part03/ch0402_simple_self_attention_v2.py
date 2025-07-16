@@ -1,4 +1,7 @@
 #  Listing 3.2 A self-attention class using PyTorch's Linear layers
+import torch.nn as nn
+import torch
+
 class SelfAttention_v2(nn.Module):
     def __init__(self, d_in, d_out, qkv_bias=False):
         super().__init__()

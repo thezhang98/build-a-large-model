@@ -1,5 +1,5 @@
 import torch
-import src.part03.ch0402_simple_self_attention as ch0402
+import src.part03.ch0402_simple_self_attention_v1 as ch0402
 
 def test_sa_v1():
     x = torch.tensor([
@@ -49,6 +49,20 @@ def test_matrix_mul():
         0.2200 = 0.1 * 0.6 + 0.2 * 0.8
         ......
     """
+    a = torch.tensor([
+        [1, 2, 3],
+        [4, 5, 6]
+    ])
+    b = torch.tensor([
+        [1, 2],
+        [3, 4],
+        [5, 6]
+    ])
+    c = a @ b
+    print(c)
+    c = b @ a
+    print(c)
+
 
 def test_transpose():
     a = torch.tensor([
@@ -76,7 +90,7 @@ def test_transpose():
     """
 
 
-test_transpose()
+test_matrix_mul()
 
 
     
