@@ -1,5 +1,4 @@
 # Listing 3.3 A compact causal attention class
-from this import d
 import torch.nn as nn
 import torch
 
@@ -55,25 +54,26 @@ class CausalAttention(nn.Module):
 
 
 
-inputs = torch.tensor([
-    [
-        [0.1, 0.2, 0.3],
-        [0.4, 0.5, 0.6],
-    ],
-    [
-        [0.1, 0.2, 0.3],
-        [0.4, 0.5, 0.6],
-    ]
-])
-shape = inputs.shape
-print(shape)
-batch = inputs
-d_in = 3
-d_out = 3
+def test():
+    inputs = torch.tensor([
+        [
+            [0.1, 0.2, 0.3],
+            [0.4, 0.5, 0.6],
+        ],
+        [
+            [0.1, 0.2, 0.3],
+            [0.4, 0.5, 0.6],
+        ]
+    ])
+    shape = inputs.shape
+    print(shape)
+    batch = inputs
+    d_in = 3
+    d_out = 3
 
-torch.manual_seed(123)
-context_length = batch.shape[1]
-ca = CausalAttention(d_in, d_out, context_length, 0.0)
-context_vecs = ca(batch)
-print("context_vecs.shape:", context_vecs.shape)
-print("context_vecs:", context_vecs)
+    torch.manual_seed(123)
+    context_length = batch.shape[1]
+    ca = CausalAttention(d_in, d_out, context_length, 0.0)
+    context_vecs = ca(batch)
+    print("context_vecs.shape:", context_vecs.shape)
+    print("context_vecs:", context_vecs)
