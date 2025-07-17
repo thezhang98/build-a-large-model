@@ -1,7 +1,7 @@
 # 因果注意力掩码
 import torch
+from torch.nn.modules import dropout
 import src.part03.ch0402_simple_self_attention_v2 as ch0402_v2
-
 
 def masked_self_attention_v1(sa_v2, inputs):
     queries = sa_v2.W_query(inputs)
@@ -81,7 +81,17 @@ def masked_self_attention_v2(sa_v2, inputs):
     # step-3 归一化
     attn_weights = torch.softmax(masked / keys.shape[-1]**0.5, dim=1)
     print("归一化后的注意力权重矩阵\n",attn_weights)
+    return attn_weights
 
+
+
+def masked_self_attention_v3(sa_v2, inputs):
+    torch.manual_seed(123)
+    # 我们使用的dropout率为0.5
+    dropout = torch.nn.Dropout(0.5)
+    attn_weights =masked_self_attention_v2(sa_v2, inputs)
+    print("masked_self_attention_v3\n")
+    print("dropout后的权重矩阵\n", dropout(attn_weights))
 
 inputs = torch.tensor([
         [0.1, 0.2, 0.3],
@@ -89,5 +99,6 @@ inputs = torch.tensor([
         [0.7, 0.8, 0.9]
     ])
 sa_v2 = ch0402_v2.SelfAttention_v2(d_in=3, d_out=3)
-masked_self_attention_v1(sa_v2, inputs)
+# masked_self_attention_v1(sa_v2, inputs)
 masked_self_attention_v2(sa_v2, inputs)
+masked_self_attention_v3(sa_v2, inputs)
