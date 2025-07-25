@@ -23,5 +23,5 @@ class FeedForward(nn.Module):
             nn.Linear(4 * cfg["emb_dim"], cfg["emb_dim"]),
         )
 
-def forward(self, x):
-    return self.layers(x)
+    def forward(self, x):
+        return self.layers(x)

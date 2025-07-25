@@ -4,6 +4,7 @@ import src.part04.ch0101_dummy_gpt_model as p4c1
 import src.part04.ch0201_layer_normalization as p4c2
 import src.part04.ch0301_feed_forward as p4c3
 import src.part04.ch0401_deep_neural_network as p4c4
+import src.part04.ch0501_transformer_block as p4c5
 import tiktoken
 
 def test_ch0101():
@@ -135,4 +136,24 @@ def test_ch0401():
     )
     p4c4.print_gradients(model_with_shortcut, sample_input)
 
-test_ch0401()
+
+def test_ch0501():
+    GPT_CONFIG_124M = {
+        "vocab_size": 50257,    # Vocabulary size
+        "context_length": 1024, # Context length
+        "emb_dim": 768,         # Embedding dimension
+        "n_heads": 12,          # Number of attention heads
+        "n_layers": 12,         # Number of layers
+        "drop_rate": 0.1,       # Dropout rate
+        "qkv_bias": False       # Query-Key-Value bias
+    }
+    torch.manual_seed(123)
+    #A 建一个形状为 [batch_size, num_tokens, emb_dim] 的输入张量
+    x = torch.rand(2, 4, 768)
+    block = p4c5.TransformerBlock(GPT_CONFIG_124M)
+    output = block(x)
+
+    print("Input shape:", x.shape)
+    print("Output shape:", output.shape)
+
+test_ch0501()
