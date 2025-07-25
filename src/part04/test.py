@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import src.part04.ch0101_dummy_gpt_model as p4c1
 import src.part04.ch0201_layer_normalization as p4c2
+import src.part04.ch0301_feed_forward as p4c3
 import tiktoken
 
 def test_ch0101():
@@ -100,6 +101,22 @@ def test_ch0201():
     var = out_ln.var(dim=-1, unbiased=False, keepdim=True)
     print("Mean:\n", mean)
     print("Variance:\n", var)
+
+def test_ch0301():
+    GPT_CONFIG_124M = {
+        "vocab_size": 50257,    # Vocabulary size
+        "context_length": 1024, # Context length
+        "emb_dim": 768,         # Embedding dimension
+        "n_heads": 12,          # Number of attention heads
+        "n_layers": 12,         # Number of layers
+        "drop_rate": 0.1,       # Dropout rate
+        "qkv_bias": False       # Query-Key-Value bias
+    }
+    ffn = p4c3.FeedForward(GPT_CONFIG_124M)
+    #A 创建一个 batch 大小为 2 的示例输入
+    x = torch.rand(2, 3, 768)
+    out = ffn(x)
+    print(out.shape)
 
 
 test_ch0201()
