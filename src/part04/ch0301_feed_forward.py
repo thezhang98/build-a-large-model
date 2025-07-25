@@ -1,6 +1,5 @@
 import torch.nn as nn
 from torch.nn import GELU
-import matplotlib.pyplot as plt
 
 
 # 前馈神经网络

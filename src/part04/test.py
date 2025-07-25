@@ -3,6 +3,7 @@ import torch.nn as nn
 import src.part04.ch0101_dummy_gpt_model as p4c1
 import src.part04.ch0201_layer_normalization as p4c2
 import src.part04.ch0301_feed_forward as p4c3
+import src.part04.ch0401_deep_neural_network as p4c4
 import tiktoken
 
 def test_ch0101():
@@ -118,5 +119,20 @@ def test_ch0301():
     out = ffn(x)
     print(out.shape)
 
+def test_ch0401():
+    layer_sizes = [3, 3, 3, 3, 3, 1]
+    sample_input = torch.tensor([[1., 0., -1.]])
+    torch.manual_seed(123) # specify random seed for the initial weights for reproducibility
+    print('----------不使用快捷链连接------------')
+    model_without_shortcut = p4c4.ExampleDeepNeuralNetwork(
+        layer_sizes, use_shortcut=False
+    )
+    p4c4.print_gradients(model_without_shortcut, sample_input)
 
-test_ch0201()
+    print('----------使用快捷链连接------------')
+    model_with_shortcut = p4c4.ExampleDeepNeuralNetwork(
+        layer_sizes, use_shortcut=True
+    )
+    p4c4.print_gradients(model_with_shortcut, sample_input)
+
+test_ch0401()
