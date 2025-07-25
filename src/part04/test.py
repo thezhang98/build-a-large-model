@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import src.part04.ch0101_dummy_gpt_model as p4c1
+import src.part04.ch0201_layer_normalization as p4c2
 import tiktoken
 
 def test_ch0101():
@@ -41,4 +42,64 @@ def test_ch0101():
     print(logits)
 
 
-test_ch0101()
+def test_ch0201():
+    # 设置随机种子，保证结果可复现
+    torch.manual_seed(123)
+
+    # 1. 层输入 (Layer inputs)
+    # 形状为(2,5)，表示2个样本，每个样本5个维度（特征）
+    batch_example = torch.randn(2, 5)
+    print("层输入 (2个样本，每个5维):")
+    print(batch_example)
+    print("输入形状:", batch_example.shape)
+    print("------------------------")
+
+    # 2. 定义神经网络层
+    # 包含：
+    # - 全连接层(nn.Linear(5,6))：将5维输入映射到6维输出
+    # - 激活函数(nn.ReLU())：对输出进行非线性变换
+    layer = nn.Sequential(nn.Linear(5, 6), nn.ReLU())
+    print("神经网络层结构:")
+    print(layer)
+    print("------------------------")
+
+    # 3. 前向传播计算层输出 (Layer outputs)
+    # 经过全连接层和ReLU激活函数后的结果
+    out = layer(batch_example)
+
+    # 4. 层输出结果
+    print("层输出 (经过全连接层+ReLU后):")
+    print(out)
+    """
+        在计算均值或方差等操作时使用 keepdim=True 参数，可以确保输出张量的维度与输入张量相同，即使该操作通过dim参数减少了张量的维度。
+        例如，如果不使用 keepdim=True，返回的均值张量将是一个二维向量 [0.1324, 0.2170]，
+        而使用 keepdim=True 后，返回的张量则会是一个 2×1 的矩阵 [​[0.1324], [0.2170]​]
+    """
+    mean = out.mean(dim=-1, keepdim=True)
+    var = out.var(dim=-1, keepdim=True)
+    print("输出形状:", out.shape)  # 保持(2,6)，2个样本，每个6维
+    print("Mean:\n", mean) # 第一个值代表第一个样本的均值，第二个值代表第二个样本的均值
+    print("Variance:\n", var) # 第一个值代表第一个样本的方差，第二个值代表第二个样本的方差
+
+    print("------------------------")
+    # 5. 层归一化
+    out_norm = (out - mean) / torch.sqrt(var)
+    mean = out_norm.mean(dim=-1, keepdim=True)
+    var = out_norm.var(dim=-1, keepdim=True)
+    print("Normalized layer outputs:\n", out_norm)
+    print("Mean:\n", mean)
+    print("Variance:\n", var)
+
+
+    print("------------------------")
+    print("-----使用层归一化类-----")
+    print("------------------------")
+    ln = p4c2.LayerNorm(emb_dim=5)
+    out_ln = ln(batch_example)
+    mean = out_ln.mean(dim=-1, keepdim=True)
+    var = out_ln.var(dim=-1, unbiased=False, keepdim=True)
+    print("Mean:\n", mean)
+    print("Variance:\n", var)
+
+
+test_ch0201()
