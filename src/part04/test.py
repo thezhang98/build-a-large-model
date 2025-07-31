@@ -5,6 +5,8 @@ import src.part04.ch0201_layer_normalization as p4c2
 import src.part04.ch0301_feed_forward as p4c3
 import src.part04.ch0401_deep_neural_network as p4c4
 import src.part04.ch0501_transformer_block as p4c5
+import src.part04.ch0601_gpt_model as p4c6
+import src.part04.ch0701_generate_text as p4c7
 import tiktoken
 
 def test_ch0101():
@@ -156,4 +158,78 @@ def test_ch0501():
     print("Input shape:", x.shape)
     print("Output shape:", output.shape)
 
-test_ch0501()
+
+def test_ch0601():
+    GPT_CONFIG_124M = {
+        "vocab_size": 50257,    # Vocabulary size
+        "context_length": 1024, # Context length
+        "emb_dim": 768,         # Embedding dimension
+        "n_heads": 12,          # Number of attention heads
+        "n_layers": 12,         # Number of layers
+        "drop_rate": 0.1,       # Dropout rate
+        "qkv_bias": False       # Query-Key-Value bias
+    }
+
+    tokenizer = tiktoken.get_encoding("gpt2")
+    batch = []
+    txt1 = "Every effort moves you"
+    txt2 = "Every day holds a"
+
+    batch.append(torch.tensor(tokenizer.encode(txt1)))
+    batch.append(torch.tensor(tokenizer.encode(txt2)))
+    # 因为txt1/2是分词后的长度恰好一致，所以得到到张量是一致的，可以合并为一个批次
+    # 将多个独立的token序列合并成一个批次(batch
+    batch = torch.stack(batch, dim=0)
+
+    torch.manual_seed(123)
+    model = p4c6.GPTModel(GPT_CONFIG_124M)
+    out = model(batch)
+    # 2个文本，每个文本4个token
+    print("Input batch shape:\n", batch.shape)
+    print("\nInput batch:\n", batch)
+    # 2个文本，每个文本4个token，每个token有50257维，对应词汇表大小
+    # 模型内部把768维的嵌入向量映射到50257维的输出向量了，原因是每一个token都对所有词汇有了一个对应的概率对数
+    print("\nOutput shape:", out.shape)
+    print(out)
+
+
+def test_ch0701():
+    GPT_CONFIG_124M = {
+        "vocab_size": 50257,    # Vocabulary size
+        "context_length": 1024, # Context length
+        "emb_dim": 768,         # Embedding dimension
+        "n_heads": 12,          # Number of attention heads
+        "n_layers": 12,         # Number of layers
+        "drop_rate": 0.1,       # Dropout rate
+        "qkv_bias": False       # Query-Key-Value bias
+    }
+    tokenizer = tiktoken.get_encoding("gpt2")
+    start_context = "Hello, I am"
+    encoded = tokenizer.encode(start_context)
+    print("encoded:", encoded)
+    #A  在索引为0处添加批次维度： 原来是(4), 那么加完之后就是(1,4)
+    encoded_tensor = torch.tensor(encoded).unsqueeze(0)
+    print("encoded_tensor.shape:", encoded_tensor.shape)
+
+
+    model = p4c6.GPTModel(GPT_CONFIG_124M)
+    #A 禁用 dropout，因为当前不是在训练模型
+    model.eval()
+    out = p4c7.generate_text_simple(
+        model=model,
+        idx=encoded_tensor,
+        max_new_tokens=6,
+        context_size=GPT_CONFIG_124M["context_length"]
+    )
+    print("Output shape:", out.shape)
+    print("Output:", out)
+    print("\nOutput length:", len(out[0]))
+
+    # squeeze(i) 移除第i维上大小为1的维度，其实就是为了去一层括号
+    # tolist() 把张量转换为Python列表
+    decoded_text = tokenizer.decode(out.squeeze(0).tolist())
+    print(decoded_text)
+
+
+
+test_ch0701()
