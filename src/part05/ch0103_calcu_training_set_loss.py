@@ -108,3 +108,9 @@ with torch.no_grad():                                                 #B
 print("Training loss:", train_loss)
 print("Validation loss:", val_loss)
 
+"""
+    所谓训练集损失
+        就是经模型输出的内容与目标输出之间的损失，他反映了模型在训练过程中对参数的拟合程度
+    所谓验证集损失
+        是找一个无关的数据集，也做一个输入和输出，然后计算经模型的输出和目标输出之间的损失，他反映了模型的泛化能力
+"""

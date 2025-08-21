@@ -2,6 +2,8 @@
 
 # 环境
 Python 3.10.11
+## torch 部分现在要这么下载
+pip install torch==2.7.1+cu118 torchvision==0.22.1+cu118 torchaudio==2.7.1+cu118 --extra-index-url https://download.pytorch.org/whl/cu118 -i https://mirrors.aliyun.com/pypi/simple
 
 ## 创建虚拟环境
 python  -m venv E:\GitHubWorkspace\build-a-large-model
